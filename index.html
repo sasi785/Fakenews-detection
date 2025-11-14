@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fake News Detector</title>
+<style>
+body { font-family: Arial; max-width: 800px; margin: 40px auto; }
+textarea { width: 100%; height: 180px; }
+.result { margin-top: 20px; padding: 12px; border-radius: 8px; }
+.real { background: #e6ffed; }
+.fake { background: #ffe6e6; }
+</style>
+</head>
+<body>
+<h1>Fake News Detection</h1>
+<textarea id="articleText"></textarea>
+<button id="verifyBtn">Verify</button>
+<div id="output"></div>
+
+
+<script>
+document.getElementById('verifyBtn').addEventListener('click', async function () {
+const text = document.getElementById('articleText').value;
+document.getElementById('output').innerText = 'Checking...';
+const resp = await fetch('/predict', {
+method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text })
+});
+const data = await resp.json();
+const div = document.createElement('div');
+div.className = 'result ' + (data.label === 1 ? 'real' : 'fake');
+div.innerHTML = `<strong>Prediction:</strong> ${data.label_name}`;
+const out = document.getElementById('output');
+out.innerHTML = '';
+out.appendChild(div);
+});
+</script>
+</body>
+</html>
